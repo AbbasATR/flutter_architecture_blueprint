@@ -1,0 +1,27 @@
+{
+    "categories": [
+        {
+            "id": "1",
+            "label": "Pizza",
+            "icon_asset": "pizza_icon.png",
+            "background_color": null
+        },
+        {
+            "id": "2",
+            "label": "Burger",
+            "icon_asset": "burger_icon.png",
+            "background_color": null
+        }
+    ],
+    "brands": [
+        {
+            "id": "1",
+            "name": "Dominos",
+            "tagline": "You Got 30 Minutes",
+            "image_asset": "dominos_logo.png",
+            "background_color": null
+        }
+    ],
+    "saved_items": [],
+    "new_listings": []
+}

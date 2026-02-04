@@ -1,0 +1,231 @@
+{
+  "@@locale": "en",
+  "welcome": "Welcome",
+  "welcomeTo": "Welcome to",
+  "login": "Login",
+  "appTitle": "jet_customer",
+  "pleaseEnter": "Please enter",
+  "pleaseEnterAtLeast": "Please enter at least",
+  "characters": "characters",
+  "actions": "Actions",
+  "choose": "Choose",
+  "cancel": "Cancel",
+  "save": "Save",
+  "next": "Next",
+  "phoneNumber": "Phone Number",
+  "enterYourPhoneNumber": "Enter your phone number",
+  "searching": "Searching",
+  "jet": "JET",
+  "restaurants": "Restaurants",
+  "shopping": "Shopping",
+  "grocery": "Grocery",
+  "flowers": "Flowers",
+  "alakrakchyGroup": "Alakrakchy Group",
+  "saves": "Saves",
+  "more": "More",
+  "newListings": "New listings",
+  "home": "Home",
+  "cart": "Cart",
+  "orders": "Orders",
+  "profile": "Profile",
+  "verification": "Verification",
+  "enterPinCode": "Enter the pin code sent to the number",
+  "didntReceiveCode": "Didn't receive code?",
+  "resend": "Resend",
+  "seeAll": "See All",
+  "yes": "Yes",
+  "no": "No",
+  "confirmDelete": "Confirm delete",
+  "close": "Close",
+  "localeCode": "en",
+  "countryCode": "US",
+  "imageUploadError": "Error uploading image. Please try again.",
+  "errorPrefix": "Error:",
+  "noDataAvailable": "No data available",
+  "whereToDeliver": "Where should we deliver your order?",
+  "addNewAddress": "Add a new address",
+  "deliverToCurrentLocation": "Deliver to current location",
+  "searchHint": "Search for items or suppliers...",
+  "searchSuppliers": "Suppliers",
+  "searchItems": "Items",
+  "searchStartSearching": "Start searching for items or suppliers",
+  "searchNoSuppliersFound": "No suppliers found",
+  "searchNoItemsFound": "No items found",
+  "searchNavigateTo": "Navigate to {name}",
+  "@searchNavigateTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "searchMinDelivery": "min",
+  "searchReviews": "reviews",
+  "retry": "Retry",
+  "noSuppliersAvailable": "No suppliers available",
+  "deliveryFee": "Delivery Fee",
+  "minOrder": "Min Order",
+  "viewCart": "View Cart",
+  "chooseSize": "Choose Size",
+  "specialInstructions": "Special instructions",
+  "writeHere": "Write here",
+  "addToCart": "Add to cart",
+  "notAvailable": "Not available",
+  "calories": "calories",
+  "cartEmpty": "Your cart is empty",
+  "cartEmptyMessage": "Add items to get started",
+  "error": "Error",
+  "checkout": "Checkout",
+  "subtotal": "Subtotal",
+  "total": "Total",
+  "itemAddedToCart": "Item added to cart",
+  "cartReplaced": "Cart replaced with new item",
+  "checkoutComingSoon": "Checkout functionality coming soon",
+  "replaceCartTitle": "Replace cart items?",
+  "replaceCartMessage": "Your cart contains items from {currentSupplier}. Do you want to empty your cart and add items from {newSupplier} instead?",
+  "@replaceCartMessage": {
+    "placeholders": {
+      "currentSupplier": {
+        "type": "String"
+      },
+      "newSupplier": {
+        "type": "String"
+      }
+    }
+  },
+  "replaceCart": "Replace Cart",
+  "size": "Size",
+  "activeOrders": "Active Orders",
+  "pastOrders": "Past Orders",
+  "noOrders": "No orders yet",
+  "viewOrder": "View order",
+  "orderDetails": "Order details",
+  "deliveredBy": "Delivered by:",
+  "reorder": "Reorder",
+  "reorderComingSoon": "Reorder functionality coming soon",
+  "orderStatusOrdered": "Ordered",
+  "orderStatusProcessing": "Processing",
+  "orderStatusReadyForPickup": "Ready for Pickup",
+  "orderStatusOnTheWay": "On the Way",
+  "orderStatusDelivered": "Delivered",
+  "orderStatusCanceled": "Canceled",
+  "totalAmount": "Total Amount",
+  "viewDetails": "View Details",
+  "items": "items",
+  "moreItems": "+{count} more items",
+  "@moreItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orderNumber": "Order #{number}",
+  "@orderNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "deliveryAddress": "Delivery Address",
+  "discount": "Discount",
+  "tax": "Tax",
+  "rate": "Rate",
+  "orderTracking": "Order Tracking",
+  "orderPlaced": "Order Placed",
+  "confirmed": "Confirmed",
+  "preparing": "Preparing",
+  "readyForPickup": "Ready for Pickup",
+  "onTheWay": "On the Way",
+  "accountSettings": "Account setting",
+  "editProfile": "Edit profile",
+  "contactSupport": "Contact support",
+  "language": "Language",
+  "darkMode": "Dark mode",
+  "appearance": "Appearance",
+  "system": "System",
+  "light": "Light",
+  "dark": "Dark",
+  "favorites": "Favorites",
+  "addresses": "Addresses",
+  "deleteAccount": "Delete Account",
+  "signOut": "Sign out",
+  "deliverTo": "Deliver to",
+  "deliveryTime": "Delivery Time",
+  "paymentMethod": "Payment Method",
+  "placeOrder": "Place Order",
+  "now": "Now",
+  "cashOnDelivery": "Cash on delivery",
+  "work": "Work",
+  "addressSavedSuccessfully": "Address saved successfully!",
+  "notifications": "Notifications",
+  "markAllRead": "Mark all read",
+  "errorLoadingNotifications": "Error loading notifications",
+  "noNotifications": "No Notifications",
+  "noNotificationsMessage": "You don't have any notifications yet.\nWe'll notify you when something new arrives.",
+  "justNow": "Just now",
+  "minutesAgo": "{minutes}m ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{hours}h ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{days}d ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "weeksAgo": "{weeks}w ago",
+  "@weeksAgo": {
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "addressName": "Address Name",
+  "addressNameHint": "e.g., Home, Office, etc.",
+  "addressDetails": "Address Details",
+  "enterFullAddress": "Enter your full address",
+  "selectIcon": "Select Icon",
+  "other": "Other",
+  "homeAddress": "Home",
+  "pickLocation": "Pick Location",
+  "selectedLocation": "Selected Location",
+  "confirmLocation": "Confirm Location",
+  "couldNotGetCurrentLocation": "Could not get current location. Using default location.",
+  "failedToGetCurrentLocation": "Failed to get current location: {error}",
+  "@failedToGetCurrentLocation": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "latitude": "Lat",
+  "longitude": "Long",
+  "name": "Name",
+  "pleaseEnterYourName": "Please enter your name",
+  "dateOfBirth": "Date of Birth",
+  "accountStatus": "Account Status",
+  "profileUpdatedSuccessfully": "Profile updated successfully",
+  "chooseFromGallery": "Choose from gallery",
+  "takePhoto": "Take a photo",
+  "removePhoto": "Remove photo",
+  "galleryPickerNotImplemented": "Gallery picker not implemented yet",
+  "cameraNotImplemented": "Camera not implemented yet"
+}
