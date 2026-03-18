@@ -6,6 +6,7 @@ import 'package:flutter_architecture_blueprint/features/home/domain/usecases/get
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/request_otp.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/verify_otp.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/get_app_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/check_auth_status.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/sign_out.dart';
 import 'package:flutter_architecture_blueprint/features/notifications/domain/usecases/get_notifications.dart';

@@ -5,7 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_architecture_blueprint/core/error/failures.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/entities/auth_session.dart';
 import 'package:flutter_architecture_blueprint/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart';
 
 import '../../../../helpers/test_helper.mocks.dart';
 
@@ -22,7 +22,7 @@ void main() {
     authBloc.close();
   });
 
-  const tHomeBootstrap = HomeBootstrap(
+  const tAppBootstrap = AppBootstrap(
     categories: [],
     brands: [],
     savedItems: [],
@@ -30,7 +30,7 @@ void main() {
   );
   const tAccessToken = 'test_access_token';
   const tAuthSession = AuthSession(
-    appBootstrap: tHomeBootstrap,
+    appBootstrap: tAppBootstrap,
     accessToken: tAccessToken,
   );
 
@@ -51,7 +51,7 @@ void main() {
       wait: const Duration(seconds: 3),
       expect: () => [
         AuthLoading(),
-        const AuthAuthenticated(tHomeBootstrap, tAccessToken),
+        const AuthAuthenticated(tAppBootstrap, tAccessToken),
       ],
       verify: (_) {
         verify(mockCheckAuthStatusUseCase()).called(1);
@@ -118,8 +118,8 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'should emit Authenticated when user logs in',
       build: () => authBloc,
-      act: (bloc) => bloc.add(const AuthLoggedIn(tHomeBootstrap, tAccessToken)),
-      expect: () => [const AuthAuthenticated(tHomeBootstrap, tAccessToken)],
+      act: (bloc) => bloc.add(const AuthLoggedIn(tAppBootstrap, tAccessToken)),
+      expect: () => [const AuthAuthenticated(tAppBootstrap, tAccessToken)],
       verify: (_) {
         // Should not call use case for direct login event
         verifyNever(mockCheckAuthStatusUseCase());
@@ -131,7 +131,7 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'should emit Unauthenticated when user logs out',
       build: () => authBloc,
-      seed: () => const AuthAuthenticated(tHomeBootstrap, tAccessToken),
+      seed: () => const AuthAuthenticated(tAppBootstrap, tAccessToken),
       act: (bloc) => bloc.add(const AuthLoggedOut()),
       expect: () => [AuthUnauthenticated()],
       verify: (_) {

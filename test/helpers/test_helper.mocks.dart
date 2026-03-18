@@ -55,8 +55,10 @@ import 'package:flutter_architecture_blueprint/features/home/data/datasources/ho
     as _i20;
 import 'package:flutter_architecture_blueprint/features/home/data/models/home_bootstrap_model.dart'
     as _i21;
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart'
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart'
     as _i5;
+import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart'
+    as _i66;
 import 'package:flutter_architecture_blueprint/features/home/domain/repositories/home_repository.dart'
     as _i34;
 import 'package:flutter_architecture_blueprint/features/home/domain/usecases/get_home_bootstrap.dart'
@@ -122,6 +124,7 @@ import 'package:flutter_architecture_blueprint/shared/theme/data/datasources/the
     as _i28;
 import 'package:flutter_architecture_blueprint/shared/theme/domain/repositories/theme_mode_repository.dart'
     as _i46;
+import 'package:flutter_architecture_blueprint/core/usecases/usecase.dart' as _i67;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -163,7 +166,7 @@ class _FakeUnit_4 extends _i1.SmartFake implements _i3.Unit {
     : super(parent, parentInvocation);
 }
 
-class _FakeHomeBootstrap_5 extends _i1.SmartFake implements _i5.HomeBootstrap {
+class _FakeHomeBootstrap_5 extends _i1.SmartFake implements _i5.AppBootstrap {
   _FakeHomeBootstrap_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -456,20 +459,20 @@ class MockAuthRemoteDataSource extends _i1.Mock
           as _i14.Future<_i3.Either<_i18.Failure, _i3.Unit>>);
 
   @override
-  _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>> appStart(
+  _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>> appStart(
     String? accessToken,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#appStart, [accessToken]),
             returnValue:
-                _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>>.value(
-                  _FakeEither_2<_i18.Failure, _i5.HomeBootstrap>(
+                _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>>.value(
+                  _FakeEither_2<_i18.Failure, _i5.AppBootstrap>(
                     this,
                     Invocation.method(#appStart, [accessToken]),
                   ),
                 ),
           )
-          as _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>>);
+          as _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>>);
 }
 
 /// A class which mocks [HomeRemoteDataSource].
@@ -758,20 +761,20 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
           as _i14.Future<_i3.Either<_i18.Failure, _i33.AuthSession>>);
 
   @override
-  _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>> getAppBootstrap(
+  _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>> getAppBootstrap(
     String? accessToken,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getAppBootstrap, [accessToken]),
             returnValue:
-                _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>>.value(
-                  _FakeEither_2<_i18.Failure, _i5.HomeBootstrap>(
+                _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>>.value(
+                  _FakeEither_2<_i18.Failure, _i5.AppBootstrap>(
                     this,
                     Invocation.method(#getAppBootstrap, [accessToken]),
                   ),
                 ),
           )
-          as _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>>);
+          as _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>>);
 }
 
 /// A class which mocks [HomeRepository].
@@ -783,17 +786,17 @@ class MockHomeRepository extends _i1.Mock implements _i34.HomeRepository {
   }
 
   @override
-  _i14.Future<_i5.HomeBootstrap> fetchHomeBootstrap() =>
+  _i14.Future<_i3.Either<_i18.Failure, _i66.HomeBootstrap>> fetchHomeBootstrap() =>
       (super.noSuchMethod(
             Invocation.method(#fetchHomeBootstrap, []),
-            returnValue: _i14.Future<_i5.HomeBootstrap>.value(
-              _FakeHomeBootstrap_5(
+            returnValue: _i14.Future<_i3.Either<_i18.Failure, _i66.HomeBootstrap>>.value(
+              _FakeEither_2<_i18.Failure, _i66.HomeBootstrap>(
                 this,
                 Invocation.method(#fetchHomeBootstrap, []),
               ),
             ),
           )
-          as _i14.Future<_i5.HomeBootstrap>);
+          as _i14.Future<_i3.Either<_i18.Failure, _i66.HomeBootstrap>>);
 }
 
 /// A class which mocks [NotificationRepository].
@@ -1423,14 +1426,19 @@ class MockGetHomeBootstrapUseCase extends _i1.Mock
   }
 
   @override
-  _i14.Future<_i5.HomeBootstrap> call() =>
+  _i14.Future<_i3.Either<_i18.Failure, _i66.HomeBootstrap>> call(
+    _i67.NoParams? params,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#call, []),
-            returnValue: _i14.Future<_i5.HomeBootstrap>.value(
-              _FakeHomeBootstrap_5(this, Invocation.method(#call, [])),
+            Invocation.method(#call, [params]),
+            returnValue: _i14.Future<_i3.Either<_i18.Failure, _i66.HomeBootstrap>>.value(
+              _FakeEither_2<_i18.Failure, _i66.HomeBootstrap>(
+                this,
+                Invocation.method(#call, [params]),
+              ),
             ),
           )
-          as _i14.Future<_i5.HomeBootstrap>);
+          as _i14.Future<_i3.Either<_i18.Failure, _i66.HomeBootstrap>>);
 }
 
 /// A class which mocks [RequestOtp].
@@ -1524,20 +1532,20 @@ class MockGetAppBootstrap extends _i1.Mock implements _i51.GetAppBootstrap {
           as _i6.AuthRepository);
 
   @override
-  _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>> call(
+  _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>> call(
     _i51.GetAppBootstrapParams? params,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#call, [params]),
             returnValue:
-                _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>>.value(
-                  _FakeEither_2<_i18.Failure, _i5.HomeBootstrap>(
+                _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>>.value(
+                  _FakeEither_2<_i18.Failure, _i5.AppBootstrap>(
                     this,
                     Invocation.method(#call, [params]),
                   ),
                 ),
           )
-          as _i14.Future<_i3.Either<_i18.Failure, _i5.HomeBootstrap>>);
+          as _i14.Future<_i3.Either<_i18.Failure, _i5.AppBootstrap>>);
 }
 
 /// A class which mocks [CheckAuthStatusUseCase].

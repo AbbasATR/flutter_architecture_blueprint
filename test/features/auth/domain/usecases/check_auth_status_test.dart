@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_architecture_blueprint/core/error/failures.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/entities/auth_session.dart';
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/check_auth_status.dart';
 import 'package:mockito/mockito.dart';
 
@@ -17,14 +17,14 @@ void main() {
     useCase = CheckAuthStatusUseCase(mockAuthRepository);
   });
 
-  const tHomeBootstrap = HomeBootstrap(
+  const tAppBootstrap = AppBootstrap(
     categories: [],
     brands: [],
     savedItems: [],
     newListings: [],
   );
   const tAuthSession = AuthSession(
-    appBootstrap: tHomeBootstrap,
+    appBootstrap: tAppBootstrap,
     accessToken: 'test_access_token',
   );
 

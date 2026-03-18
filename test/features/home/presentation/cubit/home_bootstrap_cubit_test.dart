@@ -1,5 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_architecture_blueprint/core/error/failures.dart';
+import 'package:flutter_architecture_blueprint/core/usecases/usecase.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
 import 'package:flutter_architecture_blueprint/features/home/presentation/cubit/home_bootstrap_cubit.dart';
@@ -36,8 +39,8 @@ void main() {
       'should emit [Loading, Loaded] when data is fetched successfully',
       build: () {
         when(
-          mockGetHomeBootstrapUseCase(),
-        ).thenAnswer((_) async => tHomeBootstrap);
+          mockGetHomeBootstrapUseCase(const NoParams()),
+        ).thenAnswer((_) async => const Right(tHomeBootstrap));
         return cubit;
       },
       act: (cubit) => cubit.loadHomeBootstrap(),
@@ -46,7 +49,7 @@ void main() {
         const HomeBootstrapLoaded(tHomeBootstrap),
       ],
       verify: (_) {
-        verify(mockGetHomeBootstrapUseCase());
+        verify(mockGetHomeBootstrapUseCase(const NoParams()));
         verifyNoMoreInteractions(mockGetHomeBootstrapUseCase);
       },
     );
@@ -55,8 +58,8 @@ void main() {
       'should emit [Loading, Error] when fetching data fails with exception',
       build: () {
         when(
-          mockGetHomeBootstrapUseCase(),
-        ).thenThrow(Exception('Network error'));
+          mockGetHomeBootstrapUseCase(const NoParams()),
+        ).thenAnswer((_) async => Left(NetworkFailure()));
         return cubit;
       },
       act: (cubit) => cubit.loadHomeBootstrap(),
@@ -65,7 +68,7 @@ void main() {
         isA<HomeBootstrapError>().having(
           (s) => s.message,
           'message',
-          contains('Exception'),
+          contains(NetworkFailure().message),
         ),
       ],
     );
@@ -74,8 +77,8 @@ void main() {
       'should emit [Loading, Error] when fetching data fails with server error',
       build: () {
         when(
-          mockGetHomeBootstrapUseCase(),
-        ).thenThrow(Exception('Server error occurred'));
+          mockGetHomeBootstrapUseCase(const NoParams()),
+        ).thenAnswer((_) async => Left(ServerFailure('Server error occurred')));
         return cubit;
       },
       act: (cubit) => cubit.loadHomeBootstrap(),
@@ -84,7 +87,7 @@ void main() {
         isA<HomeBootstrapError>().having(
           (s) => s.message,
           'message',
-          contains('Server'),
+          contains('Server error occurred'),
         ),
       ],
     );
@@ -93,8 +96,8 @@ void main() {
       'should emit [Loading, Error] when unexpected exception occurs',
       build: () {
         when(
-          mockGetHomeBootstrapUseCase(),
-        ).thenThrow(Exception('Unexpected error'));
+          mockGetHomeBootstrapUseCase(const NoParams()),
+        ).thenAnswer((_) async => Left(UnknownFailure()));
         return cubit;
       },
       act: (cubit) => cubit.loadHomeBootstrap(),
@@ -107,8 +110,8 @@ void main() {
       'should retry loading and emit [Loading, Loaded] on success',
       build: () {
         when(
-          mockGetHomeBootstrapUseCase(),
-        ).thenAnswer((_) async => tHomeBootstrap);
+          mockGetHomeBootstrapUseCase(const NoParams()),
+        ).thenAnswer((_) async => const Right(tHomeBootstrap));
         return cubit;
       },
       seed: () => const HomeBootstrapError('Previous error'),
@@ -123,8 +126,8 @@ void main() {
       'should retry loading and emit [Loading, Error] on failure',
       build: () {
         when(
-          mockGetHomeBootstrapUseCase(),
-        ).thenThrow(Exception('Network error'));
+          mockGetHomeBootstrapUseCase(const NoParams()),
+        ).thenAnswer((_) async => Left(NetworkFailure()));
         return cubit;
       },
       seed: () => const HomeBootstrapError('Previous error'),

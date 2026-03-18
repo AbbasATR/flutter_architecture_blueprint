@@ -12,7 +12,7 @@ final class AuthCheckRequested extends AuthEvent {
 }
 
 final class AuthLoggedIn extends AuthEvent {
-  final HomeBootstrap appBootstrap;
+  final AppBootstrap appBootstrap;
   final String accessToken;
 
   const AuthLoggedIn(this.appBootstrap, this.accessToken);
