@@ -22,7 +22,7 @@ final class OtpRequested extends LoginState {
 
 final class LoginSuccess extends LoginState {
   final AuthTokens tokens;
-  final HomeBootstrap appBootstrap;
+  final AppBootstrap appBootstrap;
 
   const LoginSuccess(this.tokens, this.appBootstrap);
 

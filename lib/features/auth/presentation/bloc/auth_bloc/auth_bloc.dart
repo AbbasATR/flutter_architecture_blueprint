@@ -1,4 +1,4 @@
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/core/app_bootstrap/entities/app_bootstrap.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/check_auth_status.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';

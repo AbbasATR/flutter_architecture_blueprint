@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart' hide Order;
-import 'package:flutter_architecture_blueprint/core/error/exceptions.dart';
+import 'package:flutter_architecture_blueprint/core/error/error_mapper.dart';
 import 'package:flutter_architecture_blueprint/core/error/failures.dart';
 import 'package:flutter_architecture_blueprint/features/cart/domain/entities/cart_item.dart';
 import 'package:flutter_architecture_blueprint/features/orders/data/datasources/order_remote_data_source.dart';
@@ -7,67 +7,55 @@ import 'package:flutter_architecture_blueprint/features/orders/domain/entities/o
 import 'package:flutter_architecture_blueprint/features/orders/domain/repositories/order_repository.dart';
 
 class OrderRepositoryImpl implements OrderRepository {
-  final OrderRemoteDataSource remoteDataSource;
-
   OrderRepositoryImpl({required this.remoteDataSource});
+
+  final OrderRemoteDataSource remoteDataSource;
 
   @override
   Future<Either<Failure, List<Order>>> getOrders() async {
     try {
-      final orders = await remoteDataSource.getOrders();
-      return Right(orders);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException {
-      return const Left(NetworkFailure());
-    } catch (e) {
-      return Left(ServerFailure('Failed to load orders'));
+      final models = await remoteDataSource.getOrders();
+      return Right(models.map((model) => model.toEntity()).toList());
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
   @override
   Future<Either<Failure, List<Order>>> getActiveOrders() async {
     try {
-      final orders = await remoteDataSource.getOrders();
-      final activeOrders = orders.where((order) => order.isActive).toList();
+      final models = await remoteDataSource.getOrders();
+      final activeOrders = models
+          .where((order) => order.isActive)
+          .map((model) => model.toEntity())
+          .toList();
       return Right(activeOrders);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException {
-      return const Left(NetworkFailure());
-    } catch (e) {
-      return Left(ServerFailure('Failed to load active orders'));
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
   @override
   Future<Either<Failure, List<Order>>> getPastOrders() async {
     try {
-      final orders = await remoteDataSource.getOrders();
-      final pastOrders = orders.where((order) => !order.isActive).toList();
+      final models = await remoteDataSource.getOrders();
+      final pastOrders = models
+          .where((order) => !order.isActive)
+          .map((model) => model.toEntity())
+          .toList();
       return Right(pastOrders);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException {
-      return const Left(NetworkFailure());
-    } catch (e) {
-      return Left(ServerFailure('Failed to load past orders'));
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
   @override
   Future<Either<Failure, Order>> getOrderById(int id) async {
     try {
-      final order = await remoteDataSource.getOrderById(id);
-      return Right(order);
-    } on NotFoundException catch (e) {
-      return Left(NotFoundFailure(e.message));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException {
-      return const Left(NetworkFailure());
-    } catch (e) {
-      return Left(ServerFailure('Failed to load order'));
+      final model = await remoteDataSource.getOrderById(id);
+      return Right(model.toEntity());
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
@@ -81,47 +69,17 @@ class OrderRepositoryImpl implements OrderRepository {
     String? notes,
   }) async {
     try {
-      // For now, create a mock order since we don't have the data source method
-      final now = DateTime.now();
-      final order = Order(
-        id: DateTime.now().millisecondsSinceEpoch,
-        timestamp: now,
-        orderedById: 1, // Mock user ID
-        status: OrderStatus.ordered,
-        cashPaid: paymentMethod == PaymentMethod.cashOnDelivery
-            ? subtotal + deliveryFee
-            : 0,
-        pointsPaid: 0,
-        isSettled: false,
-        clientNotes: notes,
-        identifier: 'JET${now.millisecondsSinceEpoch}',
+      final model = await remoteDataSource.createOrder(
+        cartItems: cartItems,
+        deliveryAddress: deliveryAddress,
         paymentMethod: paymentMethod,
-        subtotalAmount: subtotal,
-        discountTotal: 0,
+        subtotal: subtotal,
         deliveryFee: deliveryFee,
-        prepMinutes: 30,
-        dropoffAddress: deliveryAddress,
-        supplierName: cartItems.isNotEmpty
-            ? 'Supplier ${cartItems.first.item.supplierId}'
-            : 'Unknown Supplier',
-        items: cartItems
-            .map(
-              (cartItem) => OrderItem(
-                name: cartItem.item.name,
-                quantity: cartItem.quantity,
-                price: cartItem.totalPrice,
-              ),
-            )
-            .toList(),
+        notes: notes,
       );
-
-      return Right(order);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on NetworkException {
-      return const Left(NetworkFailure());
-    } catch (e) {
-      return Left(ServerFailure('Failed to create order'));
+      return Right(model.toEntity());
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 }

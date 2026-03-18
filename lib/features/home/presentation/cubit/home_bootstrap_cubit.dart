@@ -1,27 +1,24 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/core/app_bootstrap/entities/app_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/core/usecases/usecase.dart';
 import 'package:flutter_architecture_blueprint/features/home/domain/usecases/get_home_bootstrap.dart';
 
 part 'home_bootstrap_state.dart';
 
 class HomeBootstrapCubit extends Cubit<HomeBootstrapState> {
+  HomeBootstrapCubit(this.getHomeBootstrapUseCase) : super(HomeBootstrapInitial());
+
   final GetHomeBootstrapUseCase getHomeBootstrapUseCase;
 
-  HomeBootstrapCubit(this.getHomeBootstrapUseCase)
-    : super(HomeBootstrapInitial());
-
   Future<void> loadHomeBootstrap() async {
-    try {
-      emit(HomeBootstrapLoading());
-      final bootstrap = await getHomeBootstrapUseCase();
-      emit(HomeBootstrapLoaded(bootstrap));
-    } catch (e) {
-      emit(HomeBootstrapError(e.toString()));
-    }
+    emit(HomeBootstrapLoading());
+    final result = await getHomeBootstrapUseCase(NoParams());
+    result.fold(
+      (failure) => emit(HomeBootstrapError(failure.message)),
+      (bootstrap) => emit(HomeBootstrapLoaded(bootstrap)),
+    );
   }
 
-  void retry() {
-    loadHomeBootstrap();
-  }
+  void retry() => loadHomeBootstrap();
 }

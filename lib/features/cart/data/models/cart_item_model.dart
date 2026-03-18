@@ -2,7 +2,6 @@ import 'package:flutter_architecture_blueprint/features/cart/domain/entities/car
 import 'package:flutter_architecture_blueprint/features/item/data/models/item_model.dart';
 import 'package:flutter_architecture_blueprint/features/item/domain/entities/item.dart';
 
-/// Data model for CartItem with JSON serialization
 class CartItemModel extends CartItem {
   const CartItemModel({
     required super.id,
@@ -35,6 +34,18 @@ class CartItemModel extends CartItem {
       sizePrice: (json['sizePrice'] as num).toDouble(),
       specialInstructions: json['specialInstructions'] as String?,
       addedAt: DateTime.parse(json['addedAt'] as String),
+    );
+  }
+
+  CartItem toEntity() {
+    return CartItem(
+      id: id,
+      item: item,
+      quantity: quantity,
+      selectedSize: selectedSize,
+      sizePrice: sizePrice,
+      specialInstructions: specialInstructions,
+      addedAt: addedAt,
     );
   }
 

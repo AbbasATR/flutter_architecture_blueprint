@@ -12,7 +12,7 @@ final class HomeBootstrapInitial extends HomeBootstrapState {}
 final class HomeBootstrapLoading extends HomeBootstrapState {}
 
 final class HomeBootstrapLoaded extends HomeBootstrapState {
-  final HomeBootstrap bootstrap;
+  final AppBootstrap bootstrap;
 
   const HomeBootstrapLoaded(this.bootstrap);
 

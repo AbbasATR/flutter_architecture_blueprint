@@ -9,6 +9,9 @@ class ApiEndpoints {
   // Home Endpoints
   static const homeBootstrap = '/home/bootstrap';
 
+  // Orders
+  static const orders = '/orders';
+
   // Users
   static const users = '/users';
   static String userById(int id) => '$users/$id';
