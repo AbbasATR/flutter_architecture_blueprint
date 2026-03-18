@@ -1,7 +1,10 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
 import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_brand.dart';
 import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_category.dart';
+import 'package:flutter_architecture_blueprint/core/error/failures.dart';
+import 'package:flutter_architecture_blueprint/core/usecases/usecase.dart';
 import 'package:flutter_architecture_blueprint/features/home/domain/usecases/get_home_bootstrap.dart';
 import 'package:mockito/mockito.dart';
 
@@ -41,10 +44,10 @@ void main() {
       // arrange
       when(
         mockHomeRepository.fetchHomeBootstrap(),
-      ).thenAnswer((_) async => tHomeBootstrap);
+).thenAnswer((_) async => const Right(tHomeBootstrap));
 
       // act
-      await useCase();
+      await useCase(const NoParams());
 
       // assert
       verify(mockHomeRepository.fetchHomeBootstrap());
@@ -55,17 +58,19 @@ void main() {
       // arrange
       when(
         mockHomeRepository.fetchHomeBootstrap(),
-      ).thenAnswer((_) async => tHomeBootstrap);
+).thenAnswer((_) async => const Right(tHomeBootstrap));
 
       // act
-      final result = await useCase();
+      final result = await useCase(const NoParams());
 
       // assert
-      expect(result, tHomeBootstrap);
-      expect(result.categories, [tHomeCategory]);
-      expect(result.brands, [tHomeBrand]);
-      expect(result.savedItems, isEmpty);
-      expect(result.newListings, isEmpty);
+      expect(result, const Right(tHomeBootstrap));
+      result.fold((failure) => fail('Expected success'), (bootstrap) {
+        expect(bootstrap.categories, [tHomeCategory]);
+        expect(bootstrap.brands, [tHomeBrand]);
+        expect(bootstrap.savedItems, isEmpty);
+        expect(bootstrap.newListings, isEmpty);
+      });
     });
 
     test('should return empty lists when no data is available', () async {
@@ -78,25 +83,26 @@ void main() {
       );
       when(
         mockHomeRepository.fetchHomeBootstrap(),
-      ).thenAnswer((_) async => tEmptyBootstrap);
+).thenAnswer((_) async => const Right(tEmptyBootstrap));
 
       // act
-      final result = await useCase();
+      final result = await useCase(const NoParams());
 
       // assert
-      expect(result, tEmptyBootstrap);
-      expect(result.categories, isEmpty);
-      expect(result.brands, isEmpty);
+      expect(result, const Right(tEmptyBootstrap));
     });
 
     test('should propagate exception when repository throws', () async {
       // arrange
       when(
         mockHomeRepository.fetchHomeBootstrap(),
-      ).thenThrow(Exception('Network error'));
+).thenAnswer((_) async => Left(NetworkFailure()));
 
-      // act & assert
-      expect(() async => await useCase(), throwsA(isA<Exception>()));
+      // act
+      final result = await useCase(const NoParams());
+
+      // assert
+      expect(result, Left(NetworkFailure()));
       verify(mockHomeRepository.fetchHomeBootstrap());
     });
   });

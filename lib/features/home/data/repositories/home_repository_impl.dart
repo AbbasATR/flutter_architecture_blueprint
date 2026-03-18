@@ -14,15 +14,11 @@ class HomeRepositoryImpl implements HomeRepository {
   });
 
   @override
-  Future<HomeBootstrap> fetchHomeBootstrap() async {
+  Future<Either<Failure, HomeBootstrap>> fetchHomeBootstrap() async {
     if (await networkInfo.isConnected) {
-      final result = await remoteDataSource.fetchHomeBootstrap();
-      return result.fold(
-        (failure) => throw Exception(failure.message),
-        (bootstrap) => bootstrap,
-      );
-    } else {
-      throw Exception(NetworkFailure().message);
+      return remoteDataSource.fetchHomeBootstrap();
     }
+
+    return Left(NetworkFailure());
   }
 }

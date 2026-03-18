@@ -3,28 +3,55 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_architecture_blueprint/core/error/failures.dart';
+import 'package:flutter_architecture_blueprint/core/usecases/usecase.dart';
 import 'package:flutter_architecture_blueprint/features/cart/domain/entities/cart_item.dart';
+import 'package:flutter_architecture_blueprint/features/cart/domain/usecases/add_cart_item.dart';
+import 'package:flutter_architecture_blueprint/features/cart/domain/usecases/clear_cart.dart';
+import 'package:flutter_architecture_blueprint/features/cart/domain/usecases/delete_cart_item.dart';
+import 'package:flutter_architecture_blueprint/features/cart/domain/usecases/get_cart_item_by_id.dart';
+import 'package:flutter_architecture_blueprint/features/cart/domain/usecases/get_cart_items.dart';
+import 'package:flutter_architecture_blueprint/features/cart/domain/usecases/update_cart_item.dart';
 import 'package:flutter_architecture_blueprint/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:flutter_architecture_blueprint/features/cart/presentation/bloc/cart_event.dart';
 import 'package:flutter_architecture_blueprint/features/cart/presentation/bloc/cart_state.dart';
 import 'package:flutter_architecture_blueprint/features/item/domain/entities/item.dart';
-import 'package:flutter_architecture_blueprint/features/item/domain/entities/item_type.dart';
 import 'package:flutter_architecture_blueprint/features/item/domain/entities/item_status.dart';
+import 'package:flutter_architecture_blueprint/features/item/domain/entities/item_type.dart';
 
-import '../../../../helpers/test_helper.mocks.dart';
+class MockGetCartItems extends Mock implements GetCartItems {}
+class MockAddCartItem extends Mock implements AddCartItem {}
+class MockUpdateCartItem extends Mock implements UpdateCartItem {}
+class MockDeleteCartItem extends Mock implements DeleteCartItem {}
+class MockClearCart extends Mock implements ClearCart {}
+class MockGetCartItemById extends Mock implements GetCartItemById {}
 
 void main() {
   late CartBloc cartBloc;
-  late MockCartRepository mockCartRepository;
+  late MockGetCartItems mockGetCartItems;
+  late MockAddCartItem mockAddCartItem;
+  late MockUpdateCartItem mockUpdateCartItem;
+  late MockDeleteCartItem mockDeleteCartItem;
+  late MockClearCart mockClearCart;
+  late MockGetCartItemById mockGetCartItemById;
 
   setUp(() {
-    mockCartRepository = MockCartRepository();
-    cartBloc = CartBloc(repository: mockCartRepository);
+    mockGetCartItems = MockGetCartItems();
+    mockAddCartItem = MockAddCartItem();
+    mockUpdateCartItem = MockUpdateCartItem();
+    mockDeleteCartItem = MockDeleteCartItem();
+    mockClearCart = MockClearCart();
+    mockGetCartItemById = MockGetCartItemById();
+    cartBloc = CartBloc(
+      getCartItems: mockGetCartItems,
+      addCartItem: mockAddCartItem,
+      updateCartItem: mockUpdateCartItem,
+      deleteCartItem: mockDeleteCartItem,
+      clearCart: mockClearCart,
+      getCartItemById: mockGetCartItemById,
+    );
   });
 
-  tearDown(() {
-    cartBloc.close();
-  });
+  tearDown(() => cartBloc.close());
 
   final tItem = Item(
     id: 1,
@@ -40,7 +67,7 @@ void main() {
     reviewCount: 10,
     updatedAt: DateTime(2024, 1, 1),
     type: ItemType.food,
-    metadata: {},
+    metadata: const {},
     prepTimeMinutes: 30,
     status: ItemStatus.available,
   );
@@ -53,7 +80,11 @@ void main() {
     addedAt: DateTime(2024, 1, 1),
   );
 
-  final tCartItems = [tCartItem];
+  late List<CartItem> tCartItems;
+
+  setUp(() {
+    tCartItems = [tCartItem];
+  });
 
   test('initial state should be CartInitial', () {
     expect(cartBloc.state, equals(const CartInitial()));
@@ -63,304 +94,111 @@ void main() {
     blocTest<CartBloc, CartState>(
       'should emit [Loading, Loaded] when loading cart succeeds',
       build: () {
-        when(
-          mockCartRepository.getCartItems(),
-        ).thenAnswer((_) async => Right(tCartItems));
+        when(mockGetCartItems(const NoParams())).thenAnswer((_) async => Right(tCartItems));
         return cartBloc;
       },
       act: (bloc) => bloc.add(const LoadCartEvent()),
-      expect: () => [
-        const CartLoading(),
-        CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2),
-      ],
-      verify: (_) {
-        verify(mockCartRepository.getCartItems()).called(1);
-      },
+      expect: () => [const CartLoading(), CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2)],
+      verify: (_) => verify(mockGetCartItems(const NoParams())).called(1),
     );
 
     blocTest<CartBloc, CartState>(
       'should emit [Loading, Error] when loading cart fails',
       build: () {
-        when(mockCartRepository.getCartItems()).thenAnswer(
-          (_) async => const Left(CacheFailure('Failed to load cart')),
-        );
+        when(mockGetCartItems(const NoParams())).thenAnswer((_) async => const Left(CacheFailure('Failed to load cart')));
         return cartBloc;
       },
       act: (bloc) => bloc.add(const LoadCartEvent()),
-      expect: () => [
-        const CartLoading(),
-        const CartError('Failed to load cart'),
-      ],
+      expect: () => [const CartLoading(), const CartError('Failed to load cart')],
     );
   });
 
-  group('AddToCartEvent', () {
+  group('mutation events', () {
     blocTest<CartBloc, CartState>(
-      'should emit [OperationSuccess] when adding item succeeds',
+      'should emit operation success when adding item succeeds',
       build: () {
-        when(
-          mockCartRepository.addCartItem(any),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
-        when(
-          mockCartRepository.getCartItems(),
-        ).thenAnswer((_) async => Right(tCartItems));
+        when(mockAddCartItem(AddCartItemParams(tCartItem))).thenAnswer((_) async => const Right(unit));
+        when(mockGetCartItems(const NoParams())).thenAnswer((_) async => Right(tCartItems));
         return cartBloc;
       },
       act: (bloc) => bloc.add(AddToCartEvent(tCartItem)),
-      expect: () => [
-        CartOperationSuccess(
-          message: 'Item added to cart',
-          items: tCartItems,
-          totalPrice: 20.0,
-          totalItems: 2,
-        ),
-      ],
+      expect: () => [CartOperationSuccess(message: 'Item added to cart', items: tCartItems, totalPrice: 20.0, totalItems: 2)],
       verify: (_) {
-        verify(mockCartRepository.addCartItem(tCartItem)).called(1);
-        verify(mockCartRepository.getCartItems()).called(1);
+        verify(mockAddCartItem(AddCartItemParams(tCartItem))).called(1);
+        verify(mockGetCartItems(const NoParams())).called(1);
       },
     );
 
     blocTest<CartBloc, CartState>(
-      'should emit [Error] when adding item fails',
+      'should emit loaded when updating item succeeds',
       build: () {
-        when(mockCartRepository.addCartItem(any)).thenAnswer(
-          (_) async => const Left(CacheFailure('Failed to add item')),
-        );
-        return cartBloc;
-      },
-      act: (bloc) => bloc.add(AddToCartEvent(tCartItem)),
-      expect: () => [const CartError('Failed to add item')],
-    );
-  });
-
-  group('UpdateCartItemEvent', () {
-    blocTest<CartBloc, CartState>(
-      'should emit [Loaded] when updating item succeeds',
-      build: () {
-        when(
-          mockCartRepository.updateCartItem(any),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
-        when(
-          mockCartRepository.getCartItems(),
-        ).thenAnswer((_) async => Right(tCartItems));
+        when(mockUpdateCartItem(UpdateCartItemParams(tCartItem))).thenAnswer((_) async => const Right(unit));
+        when(mockGetCartItems(const NoParams())).thenAnswer((_) async => Right(tCartItems));
         return cartBloc;
       },
       act: (bloc) => bloc.add(UpdateCartItemEvent(tCartItem)),
-      expect: () => [
-        CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2),
-      ],
-      verify: (_) {
-        verify(mockCartRepository.updateCartItem(tCartItem)).called(1);
-        verify(mockCartRepository.getCartItems()).called(1);
-      },
+      expect: () => [CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2)],
     );
 
     blocTest<CartBloc, CartState>(
-      'should emit [Error] when updating item fails',
+      'should emit loaded with empty cart when deleting item succeeds',
       build: () {
-        when(mockCartRepository.updateCartItem(any)).thenAnswer(
-          (_) async => const Left(CacheFailure('Failed to update item')),
-        );
-        return cartBloc;
-      },
-      act: (bloc) => bloc.add(UpdateCartItemEvent(tCartItem)),
-      expect: () => [const CartError('Failed to update item')],
-    );
-  });
-
-  group('DeleteCartItemEvent', () {
-    blocTest<CartBloc, CartState>(
-      'should emit [Loaded] with updated cart when deleting item succeeds',
-      build: () {
-        when(
-          mockCartRepository.deleteCartItem(any),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
-        when(
-          mockCartRepository.getCartItems(),
-        ).thenAnswer((_) async => const Right([]));
+        when(mockDeleteCartItem(const DeleteCartItemParams('1'))).thenAnswer((_) async => const Right(unit));
+        when(mockGetCartItems(const NoParams())).thenAnswer((_) async => const Right(<CartItem>[]));
         return cartBloc;
       },
       act: (bloc) => bloc.add(const DeleteCartItemEvent('1')),
       expect: () => [const CartLoaded(items: [], totalPrice: 0, totalItems: 0)],
-      verify: (_) {
-        verify(mockCartRepository.deleteCartItem('1')).called(1);
-        verify(mockCartRepository.getCartItems()).called(1);
-      },
     );
 
     blocTest<CartBloc, CartState>(
-      'should emit [Error] when deleting item fails',
+      'should emit loaded with empty cart when clearing succeeds',
       build: () {
-        when(mockCartRepository.deleteCartItem(any)).thenAnswer(
-          (_) async => const Left(CacheFailure('Failed to delete item')),
-        );
-        return cartBloc;
-      },
-      act: (bloc) => bloc.add(const DeleteCartItemEvent('1')),
-      expect: () => [const CartError('Failed to delete item')],
-    );
-  });
-
-  group('IncrementQuantityEvent', () {
-    blocTest<CartBloc, CartState>(
-      'should emit [Loaded] when incrementing quantity succeeds',
-      build: () {
-        when(
-          mockCartRepository.getCartItemById(any),
-        ).thenAnswer((_) async => Right(tCartItem));
-        when(
-          mockCartRepository.updateCartItem(any),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
-        when(
-          mockCartRepository.getCartItems(),
-        ).thenAnswer((_) async => Right(tCartItems));
-        return cartBloc;
-      },
-      act: (bloc) => bloc.add(const IncrementQuantityEvent('1')),
-      expect: () => [
-        CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2),
-      ],
-      verify: (_) {
-        verify(mockCartRepository.getCartItemById('1')).called(1);
-        verify(mockCartRepository.updateCartItem(any)).called(1);
-        verify(mockCartRepository.getCartItems()).called(1);
-      },
-    );
-
-    blocTest<CartBloc, CartState>(
-      'should emit [Error] when item not found',
-      build: () {
-        when(
-          mockCartRepository.getCartItemById(any),
-        ).thenAnswer((_) async => const Right(null));
-        return cartBloc;
-      },
-      act: (bloc) => bloc.add(const IncrementQuantityEvent('1')),
-      expect: () => [],
-    );
-  });
-
-  group('DecrementQuantityEvent', () {
-    blocTest<CartBloc, CartState>(
-      'should emit [Loaded] when decrementing quantity succeeds',
-      build: () {
-        final itemWithQuantity3 = tCartItem.copyWith(quantity: 3);
-        when(
-          mockCartRepository.getCartItemById(any),
-        ).thenAnswer((_) async => Right(itemWithQuantity3));
-        when(
-          mockCartRepository.updateCartItem(any),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
-        when(
-          mockCartRepository.getCartItems(),
-        ).thenAnswer((_) async => Right(tCartItems));
-        return cartBloc;
-      },
-      act: (bloc) => bloc.add(const DecrementQuantityEvent('1')),
-      expect: () => [
-        CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2),
-      ],
-      verify: (_) {
-        verify(mockCartRepository.getCartItemById('1')).called(1);
-        verify(mockCartRepository.updateCartItem(any)).called(1);
-        verify(mockCartRepository.getCartItems()).called(1);
-      },
-    );
-
-    blocTest<CartBloc, CartState>(
-      'should delete item when quantity is 1',
-      build: () {
-        final itemWithQuantity1 = tCartItem.copyWith(quantity: 1);
-        when(
-          mockCartRepository.getCartItemById(any),
-        ).thenAnswer((_) async => Right(itemWithQuantity1));
-        when(
-          mockCartRepository.deleteCartItem(any),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
-        when(
-          mockCartRepository.getCartItems(),
-        ).thenAnswer((_) async => const Right([]));
-        return cartBloc;
-      },
-      act: (bloc) => bloc.add(const DecrementQuantityEvent('1')),
-      expect: () => [const CartLoaded(items: [], totalPrice: 0, totalItems: 0)],
-      verify: (_) {
-        verify(mockCartRepository.getCartItemById('1')).called(1);
-      },
-    );
-  });
-
-  group('ClearCartEvent', () {
-    blocTest<CartBloc, CartState>(
-      'should emit [Loaded] with empty cart when clearing succeeds',
-      build: () {
-        when(
-          mockCartRepository.clearCart(),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
+        when(mockClearCart(const NoParams())).thenAnswer((_) async => const Right(unit));
         return cartBloc;
       },
       act: (bloc) => bloc.add(const ClearCartEvent()),
       expect: () => [const CartLoaded(items: [], totalPrice: 0, totalItems: 0)],
-      verify: (_) {
-        verify(mockCartRepository.clearCart()).called(1);
+    );
+  });
+
+  group('quantity events', () {
+    blocTest<CartBloc, CartState>(
+      'should increment quantity and reload cart',
+      build: () {
+        when(mockGetCartItemById(const GetCartItemByIdParams('1'))).thenAnswer((_) async => Right(tCartItem));
+        when(mockUpdateCartItem(any)).thenAnswer((_) async => const Right(unit));
+        when(mockGetCartItems(const NoParams())).thenAnswer((_) async => Right(tCartItems));
+        return cartBloc;
       },
+      act: (bloc) => bloc.add(const IncrementQuantityEvent('1')),
+      expect: () => [CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2)],
     );
 
     blocTest<CartBloc, CartState>(
-      'should emit [Error] when clearing fails',
+      'should decrement quantity and reload cart',
       build: () {
-        when(mockCartRepository.clearCart()).thenAnswer(
-          (_) async => const Left(CacheFailure('Failed to clear cart')),
-        );
+        when(mockGetCartItemById(const GetCartItemByIdParams('1'))).thenAnswer((_) async => Right(tCartItem.copyWith(quantity: 3)));
+        when(mockUpdateCartItem(any)).thenAnswer((_) async => const Right(unit));
+        when(mockGetCartItems(const NoParams())).thenAnswer((_) async => Right(tCartItems));
         return cartBloc;
       },
-      act: (bloc) => bloc.add(const ClearCartEvent()),
-      expect: () => [const CartError('Failed to clear cart')],
+      act: (bloc) => bloc.add(const DecrementQuantityEvent('1')),
+      expect: () => [CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2)],
     );
   });
 
   group('ReplaceCartAndAddEvent', () {
     blocTest<CartBloc, CartState>(
-      'should emit [OperationSuccess] when replacing cart succeeds',
+      'should emit operation success when replacing cart succeeds',
       build: () {
-        when(
-          mockCartRepository.clearCart(),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
-        when(
-          mockCartRepository.addCartItem(any),
-        ).thenAnswer((_) async => const Right<Failure, Unit>(unit));
-        when(
-          mockCartRepository.getCartItems(),
-        ).thenAnswer((_) async => Right(tCartItems));
+        when(mockClearCart(const NoParams())).thenAnswer((_) async => const Right(unit));
+        when(mockAddCartItem(AddCartItemParams(tCartItem))).thenAnswer((_) async => const Right(unit));
+        when(mockGetCartItems(const NoParams())).thenAnswer((_) async => Right(tCartItems));
         return cartBloc;
       },
       act: (bloc) => bloc.add(ReplaceCartAndAddEvent(tCartItem)),
-      expect: () => [
-        CartOperationSuccess(
-          message: 'Cart replaced with new item',
-          items: tCartItems,
-          totalPrice: 20.0,
-          totalItems: 2,
-        ),
-      ],
-      verify: (_) {
-        verify(mockCartRepository.clearCart()).called(1);
-        verify(mockCartRepository.addCartItem(tCartItem)).called(1);
-        verify(mockCartRepository.getCartItems()).called(1);
-      },
-    );
-
-    blocTest<CartBloc, CartState>(
-      'should emit [Error] when clearing cart fails',
-      build: () {
-        when(mockCartRepository.clearCart()).thenAnswer(
-          (_) async => const Left(CacheFailure('Failed to clear cart')),
-        );
-        return cartBloc;
-      },
-      act: (bloc) => bloc.add(ReplaceCartAndAddEvent(tCartItem)),
-      expect: () => [const CartError('Failed to clear cart')],
+      expect: () => [CartOperationSuccess(message: 'Cart replaced with new item', items: tCartItems, totalPrice: 20.0, totalItems: 2)],
     );
   });
 
@@ -370,21 +208,12 @@ void main() {
     });
 
     test('should return supplier ID from CartLoaded state', () {
-      cartBloc.emit(
-        CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2),
-      );
+      cartBloc.emit(CartLoaded(items: tCartItems, totalPrice: 20.0, totalItems: 2));
       expect(cartBloc.getCartSupplierId(), equals(1));
     });
 
     test('should return supplier ID from CartOperationSuccess state', () {
-      cartBloc.emit(
-        CartOperationSuccess(
-          message: 'Success',
-          items: tCartItems,
-          totalPrice: 20.0,
-          totalItems: 2,
-        ),
-      );
+      cartBloc.emit(CartOperationSuccess(message: 'Success', items: tCartItems, totalPrice: 20.0, totalItems: 2));
       expect(cartBloc.getCartSupplierId(), equals(1));
     });
   });

@@ -8,7 +8,7 @@ import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/req
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/verify_otp.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/get_app_bootstrap.dart';
 import 'package:flutter_architecture_blueprint/features/auth/presentation/bloc/login_bloc/login_bloc.dart';
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart';
 
 import '../../../../helpers/test_helper.mocks.dart';
 
@@ -39,7 +39,7 @@ void main() {
     accessToken: 'test_access_token',
     refreshToken: 'test_refresh_token',
   );
-  const tHomeBootstrap = HomeBootstrap(
+  const tAppBootstrap = AppBootstrap(
     categories: [],
     brands: [],
     savedItems: [],
@@ -117,13 +117,13 @@ void main() {
         ).thenAnswer((_) async => const Right(tAuthTokens));
         when(
           mockGetAppBootstrap(any),
-        ).thenAnswer((_) async => const Right(tHomeBootstrap));
+        ).thenAnswer((_) async => const Right(tAppBootstrap));
         return loginBloc;
       },
       act: (bloc) => bloc.add(const VerifyOtpSubmitted(tPhoneNumber, tPinCode)),
       expect: () => [
         LoginLoading(),
-        const LoginSuccess(tAuthTokens, tHomeBootstrap),
+        const LoginSuccess(tAuthTokens, tAppBootstrap),
       ],
       verify: (_) {
         verify(

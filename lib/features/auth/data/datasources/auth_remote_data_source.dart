@@ -5,7 +5,7 @@ import 'package:flutter_architecture_blueprint/core/error/failures.dart';
 import 'package:flutter_architecture_blueprint/core/error/handle_dio_failure.dart';
 import 'package:flutter_architecture_blueprint/core/network/dio_client.dart';
 import 'package:flutter_architecture_blueprint/features/auth/data/models/auth_tokens_model.dart';
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart';
 
 abstract class AuthRemoteDataSource {
   Future<Either<Failure, Unit>> requestOtp(String phoneNumber);
@@ -15,7 +15,7 @@ abstract class AuthRemoteDataSource {
   );
   Future<Either<Failure, AuthTokensModel>> refreshToken(String refreshToken);
   Future<Either<Failure, Unit>> signOut();
-  Future<Either<Failure, HomeBootstrap>> appStart(String accessToken);
+  Future<Either<Failure, AppBootstrap>> appStart(String accessToken);
 }
 
 class AuthRemoteImplWithDio implements AuthRemoteDataSource {
@@ -76,7 +76,7 @@ class AuthRemoteImplWithDio implements AuthRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, HomeBootstrap>> appStart(String accessToken) async {
+  Future<Either<Failure, AppBootstrap>> appStart(String accessToken) async {
     try {
       await dioClient.get(
         ApiEndpoints.userData,
@@ -84,7 +84,7 @@ class AuthRemoteImplWithDio implements AuthRemoteDataSource {
       );
 
       return Right(
-        HomeBootstrap(
+        AppBootstrap(
           categories: [],
           brands: [],
           savedItems: [],

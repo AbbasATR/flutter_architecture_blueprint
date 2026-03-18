@@ -3,6 +3,7 @@ import 'package:flutter_architecture_blueprint/shared/localization/data/datasour
 import 'package:flutter_architecture_blueprint/shared/localization/data/repositories/locale_repository_impl.dart';
 import 'package:flutter_architecture_blueprint/shared/localization/domain/repositories/locale_repository.dart';
 import 'package:flutter_architecture_blueprint/shared/localization/locale_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> initLocalization(GetIt sl) async {
   // Cubit
@@ -15,6 +16,6 @@ Future<void> initLocalization(GetIt sl) async {
 
   // Data Source
   sl.registerLazySingleton<LocaleLocalDataSource>(
-    () => LocaleLocalDataSourceImpl(sl()),
+    () => LocaleLocalDataSourceImpl(sl<SharedPreferences>()),
   );
 }

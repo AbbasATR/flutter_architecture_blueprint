@@ -42,7 +42,7 @@ void main() {
         final result = await repository.fetchHomeBootstrap();
 
         // Assert
-        expect(result, equals(tHomeBootstrap));
+        expect(result, equals(const Right(tHomeBootstrap)));
         verify(mockNetworkInfo.isConnected);
         verify(mockRemoteDataSource.fetchHomeBootstrap());
       },
@@ -58,59 +58,34 @@ void main() {
         final call = repository.fetchHomeBootstrap;
 
         // Assert
-        expect(
-          () => call(),
-          throwsA(
-            isA<Exception>().having(
-              (e) => e.toString(),
-              'message',
-              contains(NetworkFailure().message),
-            ),
-          ),
-        );
+        expect(await call(), equals(Left(NetworkFailure())));
         verify(mockNetworkInfo.isConnected);
         verifyNever(mockRemoteDataSource.fetchHomeBootstrap());
       },
     );
 
-    test('should throw Exception when remote data source fails', () async {
+    test('should return failure when remote data source fails', () async {
       // Arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(
         mockRemoteDataSource.fetchHomeBootstrap(),
       ).thenAnswer((_) async => Left(ServerFailure('Server error')));
 
-      // Act & Assert
-      expect(
-        () => repository.fetchHomeBootstrap(),
-        throwsA(
-          isA<Exception>().having(
-            (e) => e.toString(),
-            'message',
-            contains('Server error'),
-          ),
-        ),
-      );
+      final result = await repository.fetchHomeBootstrap();
+
+      expect(result, equals(Left(ServerFailure('Server error'))));
     });
 
-    test('should throw Exception when cache failure occurs', () async {
+    test('should return cache failure when cache failure occurs', () async {
       // Arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(
         mockRemoteDataSource.fetchHomeBootstrap(),
       ).thenAnswer((_) async => Left(CacheFailure('Cache error')));
 
-      // Act & Assert
-      expect(
-        () => repository.fetchHomeBootstrap(),
-        throwsA(
-          isA<Exception>().having(
-            (e) => e.toString(),
-            'message',
-            contains('Cache error'),
-          ),
-        ),
-      );
+      final result = await repository.fetchHomeBootstrap();
+
+      expect(result, equals(Left(CacheFailure('Cache error'))));
     });
   });
 }

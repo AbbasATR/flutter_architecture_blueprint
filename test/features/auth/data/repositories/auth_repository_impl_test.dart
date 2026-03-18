@@ -4,7 +4,7 @@ import 'package:flutter_architecture_blueprint/core/error/failures.dart';
 import 'package:flutter_architecture_blueprint/features/auth/data/models/auth_tokens_model.dart';
 import 'package:flutter_architecture_blueprint/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/entities/auth_session.dart';
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../../../helpers/test_helper.mocks.dart';
@@ -34,14 +34,14 @@ void main() {
     accessToken: tAccessToken,
     refreshToken: tRefreshToken,
   );
-  const tHomeBootstrap = HomeBootstrap(
+  const tAppBootstrap = AppBootstrap(
     categories: [],
     brands: [],
     savedItems: [],
     newListings: [],
   );
   const tAuthSession = AuthSession(
-    appBootstrap: tHomeBootstrap,
+    appBootstrap: tAppBootstrap,
     accessToken: tAccessToken,
   );
 
@@ -249,7 +249,7 @@ void main() {
         ).thenAnswer((_) async => Future.value());
         when(
           mockRemoteDataSource.appStart(any),
-        ).thenAnswer((_) async => const Right(tHomeBootstrap));
+        ).thenAnswer((_) async => const Right(tAppBootstrap));
 
         // Act
         final result = await repository.checkAuthStatus();
@@ -344,19 +344,19 @@ void main() {
 
   group('getAppBootstrap', () {
     test(
-      'should return HomeBootstrap when network is connected and call succeeds',
+      'should return AppBootstrap when network is connected and call succeeds',
       () async {
         // Arrange
         when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
         when(
           mockRemoteDataSource.appStart(any),
-        ).thenAnswer((_) async => const Right(tHomeBootstrap));
+        ).thenAnswer((_) async => const Right(tAppBootstrap));
 
         // Act
         final result = await repository.getAppBootstrap(tAccessToken);
 
         // Assert
-        expect(result, equals(const Right(tHomeBootstrap)));
+        expect(result, equals(const Right(tAppBootstrap)));
         verify(mockNetworkInfo.isConnected);
         verify(mockRemoteDataSource.appStart(tAccessToken));
       },

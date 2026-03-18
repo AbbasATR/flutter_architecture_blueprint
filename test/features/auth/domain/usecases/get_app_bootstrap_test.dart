@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_architecture_blueprint/core/error/failures.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/usecases/get_app_bootstrap.dart';
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart';
 import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_brand.dart';
 import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_category.dart';
 import 'package:mockito/mockito.dart';
@@ -34,7 +34,7 @@ void main() {
     imageAsset: 'dominos_logo.png',
   );
 
-  const tHomeBootstrap = HomeBootstrap(
+  const tAppBootstrap = AppBootstrap(
     categories: [tHomeCategory],
     brands: [tHomeBrand],
     savedItems: [],
@@ -48,7 +48,7 @@ void main() {
         // arrange
         when(
           mockAuthRepository.getAppBootstrap(any),
-        ).thenAnswer((_) async => const Right(tHomeBootstrap));
+        ).thenAnswer((_) async => const Right(tAppBootstrap));
 
         // act
         await useCase(tParams);
@@ -59,17 +59,17 @@ void main() {
       },
     );
 
-    test('should return HomeBootstrap when fetch is successful', () async {
+    test('should return AppBootstrap when fetch is successful', () async {
       // arrange
       when(
         mockAuthRepository.getAppBootstrap(any),
-      ).thenAnswer((_) async => const Right(tHomeBootstrap));
+      ).thenAnswer((_) async => const Right(tAppBootstrap));
 
       // act
       final result = await useCase(tParams);
 
       // assert
-      expect(result, const Right(tHomeBootstrap));
+      expect(result, const Right(tAppBootstrap));
       result.fold((failure) => fail('Should not return failure'), (bootstrap) {
         expect(bootstrap.categories.length, 1);
         expect(bootstrap.brands.length, 1);

@@ -306,7 +306,7 @@ void main() {
       requestOptions: RequestOptions(path: ApiEndpoints.userData),
     );
 
-    test('should return HomeBootstrap when app start is successful', () async {
+    test('should return AppBootstrap when app start is successful', () async {
       // arrange
       when(
         mockDioClient.get(ApiEndpoints.userData, options: anyNamed('options')),

@@ -6,7 +6,7 @@ import 'package:flutter_architecture_blueprint/features/auth/data/datasources/au
 import 'package:flutter_architecture_blueprint/features/auth/domain/entities/auth_session.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/entities/auth_tokens.dart';
 import 'package:flutter_architecture_blueprint/features/auth/domain/repositories/auth_repository.dart';
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/features/auth/domain/entities/app_bootstrap.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -100,7 +100,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, HomeBootstrap>> getAppBootstrap(
+  Future<Either<Failure, AppBootstrap>> getAppBootstrap(
     String accessToken,
   ) async {
     if (await networkInfo.isConnected) {
