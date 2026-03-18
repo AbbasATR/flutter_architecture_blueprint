@@ -1,6 +1,6 @@
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_brand.dart';
+import 'package:flutter_architecture_blueprint/core/app_bootstrap/entities/app_brand.dart';
 
-class HomeBrandModel extends HomeBrand {
+class HomeBrandModel extends AppBrand {
   const HomeBrandModel({
     required super.id,
     required super.name,
@@ -19,17 +19,7 @@ class HomeBrandModel extends HomeBrand {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'tagline': tagline,
-      'image_asset': imageAsset,
-      'background_color': backgroundColor,
-    };
-  }
-
-  factory HomeBrandModel.fromEntity(HomeBrand entity) {
+  factory HomeBrandModel.fromEntity(AppBrand entity) {
     return HomeBrandModel(
       id: entity.id,
       name: entity.name,
@@ -38,4 +28,20 @@ class HomeBrandModel extends HomeBrand {
       backgroundColor: entity.backgroundColor,
     );
   }
+
+  AppBrand toEntity() => AppBrand(
+    id: id,
+    name: name,
+    tagline: tagline,
+    imageAsset: imageAsset,
+    backgroundColor: backgroundColor,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'tagline': tagline,
+    'image_asset': imageAsset,
+    'background_color': backgroundColor,
+  };
 }

@@ -90,6 +90,70 @@ class OrderModel extends Order {
     );
   }
 
+  factory OrderModel.fromCreateOrder({
+    required List<OrderItemModel> items,
+    required String deliveryAddress,
+    required PaymentMethod paymentMethod,
+    required double subtotal,
+    required double deliveryFee,
+    String? notes,
+  }) {
+    final now = DateTime.now().toUtc();
+    final total = subtotal + deliveryFee;
+
+    return OrderModel(
+      id: now.millisecondsSinceEpoch,
+      timestamp: now,
+      orderedById: 0,
+      status: OrderStatus.ordered,
+      cashPaid: paymentMethod == PaymentMethod.cashOnDelivery ? total : 0,
+      pointsPaid: 0,
+      isSettled: paymentMethod != PaymentMethod.cashOnDelivery,
+      clientNotes: notes,
+      identifier: 'ORD-${now.millisecondsSinceEpoch}',
+      paymentMethod: paymentMethod,
+      subtotalAmount: subtotal,
+      discountTotal: 0,
+      deliveryFee: deliveryFee,
+      prepMinutes: 30,
+      dropoffAddress: deliveryAddress,
+      supplierName: items.isNotEmpty ? items.first.name : 'Unknown Supplier',
+      items: items,
+    );
+  }
+
+  Order toEntity() => Order(
+    id: id,
+    timestamp: timestamp,
+    orderedById: orderedById,
+    driverId: driverId,
+    managedById: managedById,
+    status: status,
+    freeDeliveryQualifier: freeDeliveryQualifier,
+    cashPaid: cashPaid,
+    pointsPaid: pointsPaid,
+    isSettled: isSettled,
+    clientNotes: clientNotes,
+    identifier: identifier,
+    paymentMethod: paymentMethod,
+    subtotalAmount: subtotalAmount,
+    discountTotal: discountTotal,
+    deliveryFee: deliveryFee,
+    prepMinutes: prepMinutes,
+    supplierNotes: supplierNotes,
+    cancelReason: cancelReason,
+    confirmedAt: confirmedAt,
+    pickedUpAt: pickedUpAt,
+    preparedAt: preparedAt,
+    canceledAt: canceledAt,
+    deliveredAt: deliveredAt,
+    dropoffLatLong: dropoffLatLong,
+    dropoffAddress: dropoffAddress,
+    supplierName: supplierName,
+    supplierImage: supplierImage,
+    items: items,
+  );
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -137,6 +201,14 @@ class OrderItemModel extends OrderItem {
       name: json['name'] as String,
       quantity: json['quantity'] as int,
       price: (json['price'] as num).toDouble(),
+    );
+  }
+
+  factory OrderItemModel.fromEntity(OrderItem entity) {
+    return OrderItemModel(
+      name: entity.name,
+      quantity: entity.quantity,
+      price: entity.price,
     );
   }
 

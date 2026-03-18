@@ -1,45 +1,43 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_architecture_blueprint/core/error/error_mapper.dart';
 import 'package:flutter_architecture_blueprint/core/error/failures.dart';
 import 'package:flutter_architecture_blueprint/features/cart/data/datasources/cart_local_data_source.dart';
 import 'package:flutter_architecture_blueprint/features/cart/data/models/cart_item_model.dart';
 import 'package:flutter_architecture_blueprint/features/cart/domain/entities/cart_item.dart';
 import 'package:flutter_architecture_blueprint/features/cart/domain/repositories/cart_repository.dart';
 
-/// Implementation of CartRepository
 class CartRepositoryImpl implements CartRepository {
-  final CartLocalDataSource localDataSource;
-
   CartRepositoryImpl({required this.localDataSource});
+
+  final CartLocalDataSource localDataSource;
 
   @override
   Future<Either<Failure, List<CartItem>>> getCartItems() async {
     try {
-      final items = await localDataSource.getCartItems();
-      return Right(items);
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
+      final models = await localDataSource.getCartItems();
+      return Right(models.map((model) => model.toEntity()).toList());
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
   @override
   Future<Either<Failure, void>> addCartItem(CartItem item) async {
     try {
-      final model = CartItemModel.fromEntity(item);
-      await localDataSource.addCartItem(model);
+      await localDataSource.addCartItem(CartItemModel.fromEntity(item));
       return const Right(null);
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
   @override
   Future<Either<Failure, void>> updateCartItem(CartItem item) async {
     try {
-      final model = CartItemModel.fromEntity(item);
-      await localDataSource.updateCartItem(model);
+      await localDataSource.updateCartItem(CartItemModel.fromEntity(item));
       return const Right(null);
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
@@ -48,8 +46,8 @@ class CartRepositoryImpl implements CartRepository {
     try {
       await localDataSource.deleteCartItem(id);
       return const Right(null);
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
@@ -58,18 +56,18 @@ class CartRepositoryImpl implements CartRepository {
     try {
       await localDataSource.clearCart();
       return const Right(null);
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 
   @override
   Future<Either<Failure, CartItem?>> getCartItemById(String id) async {
     try {
-      final item = await localDataSource.getCartItemById(id);
-      return Right(item);
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
+      final model = await localDataSource.getCartItemById(id);
+      return Right(model?.toEntity());
+    } catch (error) {
+      return Left(mapExceptionToFailure(error));
     }
   }
 }

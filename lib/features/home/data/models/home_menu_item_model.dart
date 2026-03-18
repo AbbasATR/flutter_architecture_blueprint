@@ -1,6 +1,6 @@
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_menu_item.dart';
+import 'package:flutter_architecture_blueprint/core/app_bootstrap/entities/app_menu_item.dart';
 
-class HomeMenuItemModel extends HomeMenuItem {
+class HomeMenuItemModel extends AppMenuItem {
   const HomeMenuItemModel({
     required super.id,
     required super.name,
@@ -29,22 +29,7 @@ class HomeMenuItemModel extends HomeMenuItem {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'subtitle': subtitle,
-      'price': price,
-      'currency': currency,
-      'rating': rating,
-      'delivery_time': deliveryTime,
-      'image_asset': imageAsset,
-      'discount': discount,
-      'is_saved': isSaved,
-    };
-  }
-
-  factory HomeMenuItemModel.fromEntity(HomeMenuItem entity) {
+  factory HomeMenuItemModel.fromEntity(AppMenuItem entity) {
     return HomeMenuItemModel(
       id: entity.id,
       name: entity.name,
@@ -58,4 +43,30 @@ class HomeMenuItemModel extends HomeMenuItem {
       isSaved: entity.isSaved,
     );
   }
+
+  AppMenuItem toEntity() => AppMenuItem(
+    id: id,
+    name: name,
+    subtitle: subtitle,
+    price: price,
+    currency: currency,
+    rating: rating,
+    deliveryTime: deliveryTime,
+    imageAsset: imageAsset,
+    discount: discount,
+    isSaved: isSaved,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'subtitle': subtitle,
+    'price': price,
+    'currency': currency,
+    'rating': rating,
+    'delivery_time': deliveryTime,
+    'image_asset': imageAsset,
+    'discount': discount,
+    'is_saved': isSaved,
+  };
 }

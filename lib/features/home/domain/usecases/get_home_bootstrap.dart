@@ -1,10 +1,16 @@
-import '../entities/home_bootstrap.dart';
-import '../repositories/home_repository.dart';
+import 'package:dartz/dartz.dart';
+import 'package:flutter_architecture_blueprint/core/app_bootstrap/entities/app_bootstrap.dart';
+import 'package:flutter_architecture_blueprint/core/error/failures.dart';
+import 'package:flutter_architecture_blueprint/core/usecases/usecase.dart';
+import 'package:flutter_architecture_blueprint/features/home/domain/repositories/home_repository.dart';
 
-class GetHomeBootstrapUseCase {
+class GetHomeBootstrapUseCase implements UseCase<AppBootstrap, NoParams> {
   const GetHomeBootstrapUseCase(this._repository);
 
   final HomeRepository _repository;
 
-  Future<HomeBootstrap> call() => _repository.fetchHomeBootstrap();
+  @override
+  Future<Either<Failure, AppBootstrap>> call(NoParams params) {
+    return _repository.fetchHomeBootstrap();
+  }
 }

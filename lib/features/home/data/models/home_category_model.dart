@@ -1,6 +1,6 @@
-import 'package:flutter_architecture_blueprint/features/home/domain/entities/home_category.dart';
+import 'package:flutter_architecture_blueprint/core/app_bootstrap/entities/app_category.dart';
 
-class HomeCategoryModel extends HomeCategory {
+class HomeCategoryModel extends AppCategory {
   const HomeCategoryModel({
     required super.id,
     required super.label,
@@ -17,16 +17,7 @@ class HomeCategoryModel extends HomeCategory {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'label': label,
-      'icon_asset': iconAsset,
-      'background_color': backgroundColor,
-    };
-  }
-
-  factory HomeCategoryModel.fromEntity(HomeCategory entity) {
+  factory HomeCategoryModel.fromEntity(AppCategory entity) {
     return HomeCategoryModel(
       id: entity.id,
       label: entity.label,
@@ -34,4 +25,18 @@ class HomeCategoryModel extends HomeCategory {
       backgroundColor: entity.backgroundColor,
     );
   }
+
+  AppCategory toEntity() => AppCategory(
+    id: id,
+    label: label,
+    iconAsset: iconAsset,
+    backgroundColor: backgroundColor,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'label': label,
+    'icon_asset': iconAsset,
+    'background_color': backgroundColor,
+  };
 }
